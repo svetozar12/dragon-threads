@@ -1,0 +1,82 @@
+basePath: /
+definitions:
+  entities.User:
+    properties:
+      active:
+        type: boolean
+      avatar:
+        type: string
+      bio:
+        maxLength: 250
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      email:
+        type: string
+      id:
+        type: integer
+      updatedAt:
+        type: string
+      username:
+        maxLength: 30
+        minLength: 3
+        type: string
+    required:
+    - email
+    - id
+    - username
+    type: object
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  users.UserSchema:
+    properties:
+      avatar:
+        type: string
+      bio:
+        type: string
+      email:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:3333
+info:
+  contact:
+    email: fiber@swagger.io
+    name: API Support
+  description: This is a sample swagger for Fiber
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Fiber Example API
+  version: "1.0"
+paths:
+  /v1/users:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/users.UserSchema'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.User'
+      summary: Create User
+      tags:
+      - User
+swagger: "2.0"
