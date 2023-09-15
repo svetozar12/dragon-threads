@@ -44,6 +44,21 @@ const docTemplate = `{
                         "description": "Number of items per page (default: 10)",
                         "name": "pageSize",
                         "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "sub_dragon_id"
+                        ],
+                        "type": "string",
+                        "description": "Get users by field (default 1)",
+                        "name": "getBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Get users by field value (default 1)",
+                        "name": "getByValue",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -153,6 +168,9 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "subDragonId": {
+                    "type": "integer"
+                },
                 "updatedAt": {
                     "type": "string"
                 },
@@ -200,6 +218,9 @@ const docTemplate = `{
                 },
                 "email": {
                     "type": "string"
+                },
+                "subDragonId": {
+                    "type": "integer"
                 },
                 "username": {
                     "type": "string"

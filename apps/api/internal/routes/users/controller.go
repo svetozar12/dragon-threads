@@ -4,41 +4,45 @@ import (
 	"dragon-threads/apps/api/internal/entities"
 	"dragon-threads/apps/api/internal/pkg/common"
 	"dragon-threads/apps/api/internal/repositories/usersRepository"
-	"strconv"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+)
+
+type GetByEnum string
+
+const (
+	SubDragonId GetByEnum = "sub_dragon_id"
 )
 
 // Example godoc
 // @Summary      GEt USer List
 // @Tags         User
 // @Accept       json
-// @Param page query int false "Page number (default: 1)"
-// @Param pageSize query int false "Number of items per page (default: 10)"
+// @Param page       query int false "Page number (default: 1)"
+// @Param pageSize   query int false "Number of items per page (default: 10)"
+// @Param getBy      query GetByEnum false "Get users by field (optional)"
+// @Param getByValue query int false "Get users by field value (optional)".
 // @Success      200  {object} users.UserListSchema "Success"
 // @Failure 	 400  {object} common.CommonErrorSchema
 // @Router       /v1/users [get]
 func getUserList(c *fiber.Ctx) error {
-	pageStr := c.Query("page")
-	page, err := strconv.Atoi(pageStr)
+	// Parse pagination parameters
+	page, pageSize := parsePaginationParams(c)
 
-	if err != nil {
-		// If conversion to int fails, set a default value (1 in this case)
-		page = 1
-	}
-	pageSizeStr := c.Query("pageSize")
-	pageSize, err := strconv.Atoi(pageSizeStr)
+	// Get query and value parameters
+	getBy, getByValue := parseQueryParams(c)
 
-	if err != nil {
-		// If conversion to int fails, set a default value (1 in this case)
-		pageSize = 10
-	}
-	userList, total, err := usersRepository.GetUserList("1=1", page, pageSize)
+	// Get user list based on query parameters
+	userList, total, err := getUsersByQuery(getBy, getByValue, page, pageSize)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
 	}
+
+	// Check if there is a next page
 	hasNextPage := (page * pageSize) < int(total)
+
+	// Construct the response
 	response := UserListSchema{
 		Data: userList,
 		Pagination: common.CommonPaginationSchema{

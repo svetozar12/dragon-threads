@@ -33,6 +33,8 @@ definitions:
         type: string
       id:
         type: integer
+      subDragonId:
+        type: integer
       updatedAt:
         type: string
       username:
@@ -69,6 +71,8 @@ definitions:
         type: string
       email:
         type: string
+      subDragonId:
+        type: integer
       username:
         type: string
     type: object
@@ -97,6 +101,16 @@ paths:
       - description: 'Number of items per page (default: 10)'
         in: query
         name: pageSize
+        type: integer
+      - description: Get users by field (default 1)
+        enum:
+        - sub_dragon_id
+        in: query
+        name: getBy
+        type: string
+      - description: Get users by field value (default 1)
+        in: query
+        name: getByValue
         type: integer
       responses:
         "200":

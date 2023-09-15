@@ -6,10 +6,11 @@ import (
 )
 
 type UserSchema struct {
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	Avatar   string `json:"avatar"`
-	Bio      string `json:"bio"`
+	Username    string `json:"username"`
+	Email       string `json:"email"`
+	Avatar      string `json:"avatar"`
+	Bio         string `json:"bio"`
+	SubDragonId int32  `json:"subDragonId"`
 }
 
 type UserListSchema struct {

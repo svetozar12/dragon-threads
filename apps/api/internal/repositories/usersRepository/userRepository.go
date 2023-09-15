@@ -11,19 +11,18 @@ func GetUser(query interface{}, args ...interface{}) (*entities.User, error) {
 	return user, err
 }
 
-func GetUserList(query string, page int, pageSize int) ([]entities.User, int64, error) {
+func GetUserList(query string, page int, pageSize int, args []interface{}) ([]entities.User, int64, error) {
 	var total int64
-	err := database.SQL.Model(&entities.User{}).Where(query).Count(&total).Error
+	err := database.SQL.Model(&entities.User{}).Where(query, args...).Count(&total).Error
 	if err != nil {
 		return nil, 0, err
 	}
 
 	offset := (page - 1) * pageSize
 	users := []entities.User{}
-	err = database.SQL.Where(query).Offset(offset).Limit(pageSize).Find(&users).Error
+	err = database.SQL.Where(query, args...).Offset(offset).Limit(pageSize).Find(&users).Error
 	return users, total, err
 }
-
 func CreateUser(user *entities.User) (*entities.User, error) {
 	err := database.SQL.Create(user).Error
 	return user, err
