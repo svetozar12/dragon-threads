@@ -11,10 +11,17 @@ func GetUser(query interface{}, args ...interface{}) (*entities.User, error) {
 	return user, err
 }
 
-func GetUserList(userIds []string, args ...interface{}) ([]entities.User, error) {
-	products := []entities.User{}
-	err := database.SQL.Where("id in (?)", userIds, args).Find(&products).Error
-	return products, err
+func GetUserList(query string, page int, pageSize int) ([]entities.User, int64, error) {
+	var total int64
+	err := database.SQL.Model(&entities.User{}).Where(query).Count(&total).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	offset := (page - 1) * pageSize
+	users := []entities.User{}
+	err = database.SQL.Where(query).Offset(offset).Limit(pageSize).Find(&users).Error
+	return users, total, err
 }
 
 func CreateUser(user *entities.User) (*entities.User, error) {

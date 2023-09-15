@@ -7,7 +7,7 @@
 *.out
 go.work
 tmp/
-docs/
+internal/pkg/swagger/
 bazel-bin
 bazel-out
 bazel-server
