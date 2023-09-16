@@ -31,7 +31,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "GEt USer List",
+                "summary": "Get User List",
                 "parameters": [
                     {
                         "type": "integer",
@@ -50,13 +50,13 @@ const docTemplate = `{
                             "sub_dragon_id"
                         ],
                         "type": "string",
-                        "description": "Get users by field (default 1)",
+                        "description": "Get users by field (optional)",
                         "name": "getBy",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Get users by field value (default 1)",
+                        "description": "Get users by field value (optional)",
                         "name": "getByValue",
                         "in": "query"
                     }
@@ -104,6 +104,82 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.CommonErrorSchema"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/users/{userId}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get user by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/users.UserSchema"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.CommonErrorSchema"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.CommonErrorSchema"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Delete user by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.CommonErrorSchema"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found Request",
                         "schema": {
                             "$ref": "#/definitions/common.CommonErrorSchema"
                         }

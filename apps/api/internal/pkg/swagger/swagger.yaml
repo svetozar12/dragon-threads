@@ -102,13 +102,13 @@ paths:
         in: query
         name: pageSize
         type: integer
-      - description: Get users by field (default 1)
+      - description: Get users by field (optional)
         enum:
         - sub_dragon_id
         in: query
         name: getBy
         type: string
-      - description: Get users by field value (default 1)
+      - description: Get users by field value (optional)
         in: query
         name: getByValue
         type: integer
@@ -121,7 +121,7 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/common.CommonErrorSchema'
-      summary: GEt USer List
+      summary: Get User List
       tags:
       - User
     post:
@@ -144,6 +144,55 @@ paths:
           schema:
             $ref: '#/definitions/common.CommonErrorSchema'
       summary: Create User
+      tags:
+      - User
+  /v1/users/{userId}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        type: integer
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.CommonErrorSchema'
+        "404":
+          description: Not Found Request
+          schema:
+            $ref: '#/definitions/common.CommonErrorSchema'
+      summary: Delete user by ID
+      tags:
+      - User
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        type: integer
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/users.UserSchema'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.CommonErrorSchema'
+        "404":
+          description: Not Found Request
+          schema:
+            $ref: '#/definitions/common.CommonErrorSchema'
+      summary: Get user by ID
       tags:
       - User
 swagger: "2.0"

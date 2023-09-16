@@ -15,8 +15,32 @@ const (
 	SubDragonId GetByEnum = "sub_dragon_id"
 )
 
-// Example godoc
-// @Summary      GEt USer List
+// @Summary Get user by ID
+// @Tags User
+// @Accept json
+// @Param userId path int false "User ID"
+// @Success 200 {object} users.UserSchema "Success"
+// @Failure 400 {object} common.CommonErrorSchema "Bad Request"
+// @Failure 404 {object} common.CommonErrorSchema "Not Found Request"
+// @Router /v1/users/{userId} [get]
+func getUserById(c *fiber.Ctx) error {
+	// Parse pagination parameters
+	userID, err := parseUserIdParams(c)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
+	}
+	// Get user list based on query parameters
+	user, err := usersRepository.GetUser("id =?", userID)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(USER_NOT_FOUND))
+	}
+	// Construct the response
+	response := user
+
+	return c.Status(fiber.StatusOK).JSON(response)
+}
+
+// @Summary      Get User List
 // @Tags         User
 // @Accept       json
 // @Param page       query int false "Page number (default: 1)"
@@ -28,10 +52,10 @@ const (
 // @Router       /v1/users [get]
 func getUserList(c *fiber.Ctx) error {
 	// Parse pagination parameters
-	page, pageSize := parsePaginationParams(c)
+	page, pageSize := parsePaginationQuery(c)
 
 	// Get query and value parameters
-	getBy, getByValue := parseQueryParams(c)
+	getBy, getByValue := parseGetByQuery(c)
 
 	// Get user list based on query parameters
 	userList, total, err := getUsersByQuery(getBy, getByValue, page, pageSize)
@@ -83,4 +107,33 @@ func createUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
 	}
 	return c.Status(fiber.StatusOK).JSON(user)
+}
+
+// @Summary Delete user by ID
+// @Tags User
+// @Accept json
+// @Param userId path int false "User ID"
+// @Success 200 {object} string "Success"
+// @Failure 400 {object} common.CommonErrorSchema "Bad Request"
+// @Failure 404 {object} common.CommonErrorSchema "Not Found Request"
+// @Router /v1/users/{userId} [delete]
+func deleteUserById(c *fiber.Ctx) error {
+	// Parse pagination parameters
+	userID, err := parseUserIdParams(c)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
+	}
+	// Get user list based on query parameters
+	user, err := usersRepository.GetUser("id =?", userID)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(USER_NOT_FOUND))
+	}
+	_, err = usersRepository.DeleteUser(user)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
+	}
+	// Construct the response
+	response := USER_SUCCESSFULLY_DELETED
+
+	return c.Status(fiber.StatusOK).SendString(response)
 }

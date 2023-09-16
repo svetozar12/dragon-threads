@@ -18,7 +18,7 @@ func isUserRegistered(email string, username string) bool {
 	return userByEmail.ID > 0 || userByUsername.ID > 0
 }
 
-func parsePaginationParams(c *fiber.Ctx) (int, int) {
+func parsePaginationQuery(c *fiber.Ctx) (int, int) {
 	pageStr := c.Query("page")
 	page, err := strconv.Atoi(pageStr)
 	if err != nil {
@@ -34,7 +34,7 @@ func parsePaginationParams(c *fiber.Ctx) (int, int) {
 	return page, pageSize
 }
 
-func parseQueryParams(c *fiber.Ctx) (string, string) {
+func parseGetByQuery(c *fiber.Ctx) (string, string) {
 	getBy := c.Query("getBy")
 	getByValue := c.Query("getByValue")
 	if getBy == "" || getByValue == "" {
@@ -45,6 +45,14 @@ func parseQueryParams(c *fiber.Ctx) (string, string) {
 	return getBy, getByValue
 }
 
+func parseUserIdParams(c *fiber.Ctx) (int, error) {
+	userIdStr := c.Params("userId")
+	userId, err := strconv.Atoi(userIdStr)
+	if err != nil {
+		return 0, fmt.Errorf("User id is required")
+	}
+	return userId, nil
+}
 func getUsersByQuery(getBy string, getByValue string, page int, pageSize int) ([]entities.User, int64, error) {
 	// Retrieve user list based on query parameters
 	userList, total, err := usersRepository.GetUserList(getBy+"=?", page, pageSize, []interface{}{getByValue})

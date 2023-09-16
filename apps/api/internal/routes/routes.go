@@ -24,6 +24,6 @@ func InitRoutes(app *fiber.App) {
 	v1.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello from the api")
 	})
-	v1.Get("/swagger/*", swagger.HandlerDefault) // default
 	users.UsersRoute(v1)
+	v1.Get("/swagger/*", swagger.HandlerDefault) // default
 }
