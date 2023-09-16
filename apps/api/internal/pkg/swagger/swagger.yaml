@@ -23,7 +23,6 @@ definitions:
       avatar:
         type: string
       bio:
-        maxLength: 250
         type: string
       createdAt:
         type: string
@@ -38,13 +37,9 @@ definitions:
       updatedAt:
         type: string
       username:
-        maxLength: 30
-        minLength: 3
         type: string
     required:
-    - email
     - id
-    - username
     type: object
   gorm.DeletedAt:
     properties:
@@ -53,6 +48,21 @@ definitions:
       valid:
         description: Valid is true if Time is not NULL
         type: boolean
+    type: object
+  users.UpdateUserSchema:
+    properties:
+      avatar:
+        type: string
+      bio:
+        type: string
+      email:
+        type: string
+      subDragonId:
+        type: integer
+      username:
+        maxLength: 30
+        minLength: 3
+        type: string
     type: object
   users.UserListSchema:
     properties:
@@ -74,7 +84,12 @@ definitions:
       subDragonId:
         type: integer
       username:
+        maxLength: 30
+        minLength: 3
         type: string
+    required:
+    - email
+    - username
     type: object
 host: localhost:3333
 info:
@@ -144,6 +159,34 @@ paths:
           schema:
             $ref: '#/definitions/common.CommonErrorSchema'
       summary: Create User
+      tags:
+      - User
+  /v1/users/{id}:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Request body for updating user
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/users.UpdateUserSchema'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.CommonErrorSchema'
+      summary: Update User
       tags:
       - User
   /v1/users/{userId}:

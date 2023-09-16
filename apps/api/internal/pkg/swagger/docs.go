@@ -111,6 +111,49 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/users/{id}": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update User",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Request body for updating user",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/users.UpdateUserSchema"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.CommonErrorSchema"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/users/{userId}": {
             "get": {
                 "consumes": [
@@ -217,9 +260,7 @@ const docTemplate = `{
         "entities.User": {
             "type": "object",
             "required": [
-                "email",
-                "id",
-                "username"
+                "id"
             ],
             "properties": {
                 "active": {
@@ -229,8 +270,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "bio": {
-                    "type": "string",
-                    "maxLength": 250
+                    "type": "string"
                 },
                 "createdAt": {
                     "type": "string"
@@ -251,9 +291,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
-                    "type": "string",
-                    "maxLength": 30,
-                    "minLength": 3
+                    "type": "string"
                 }
             }
         },
@@ -266,6 +304,28 @@ const docTemplate = `{
                 "valid": {
                     "description": "Valid is true if Time is not NULL",
                     "type": "boolean"
+                }
+            }
+        },
+        "users.UpdateUserSchema": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "bio": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "subDragonId": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 30,
+                    "minLength": 3
                 }
             }
         },
@@ -285,6 +345,10 @@ const docTemplate = `{
         },
         "users.UserSchema": {
             "type": "object",
+            "required": [
+                "email",
+                "username"
+            ],
             "properties": {
                 "avatar": {
                     "type": "string"
@@ -299,7 +363,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 30,
+                    "minLength": 3
                 }
             }
         }

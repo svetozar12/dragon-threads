@@ -6,11 +6,19 @@ import (
 )
 
 type UserSchema struct {
-	Username    string `json:"username"`
-	Email       string `json:"email"`
+	Username    string `json:"username" validate:"required,min=3,max=30"`
+	Email       string `json:"email" validate:"required,email"`
 	Avatar      string `json:"avatar"`
 	Bio         string `json:"bio"`
 	SubDragonId int32  `json:"subDragonId"`
+}
+
+type UpdateUserSchema struct {
+	Username    string `json:"username" validate:"omitempty,min=3,max=30"`
+	Email       string `json:"email" validate:"omitempty,email"`
+	Avatar      string `json:"avatar" validate:"omitempty"`
+	Bio         string `json:"bio" validate:"omitempty"`
+	SubDragonId int32  `json:"subDragonId" validate:"omitempty"`
 }
 
 type UserListSchema struct {

@@ -58,3 +58,13 @@ func getUsersByQuery(getBy string, getByValue string, page int, pageSize int) ([
 	userList, total, err := usersRepository.GetUserList(getBy+"=?", page, pageSize, []interface{}{getByValue})
 	return userList, total, err
 }
+
+func updateUserFields(existingUser *entities.User, updatedUser UpdateUserSchema) {
+	if updatedUser.Username != "" {
+		existingUser.Username = updatedUser.Username
+	}
+
+	if updatedUser.Email != "" {
+		existingUser.Email = updatedUser.Email
+	}
+}

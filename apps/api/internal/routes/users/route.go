@@ -8,10 +8,8 @@ func UsersRoute(app fiber.Router) {
 	Users := app.Group("/users")
 
 	Users.Get("/", getUserList)
-
 	Users.Get("/:userId", getUserById)
-
 	Users.Post("/", createUser)
-
+	Users.Put("/:userId", updateUser)
 	Users.Delete("/:userId", deleteUserById)
 }
