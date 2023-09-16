@@ -1,0 +1,327 @@
+openapi: 3.0.1
+info:
+  contact:
+    email: fiber@swagger.io
+    name: API Support
+  description: This is a sample swagger for Fiber
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Fiber Example API
+  version: "1.0"
+servers:
+- url: //localhost:3333/
+paths:
+  /v1/users:
+    get:
+      parameters:
+      - description: "Page number (default: 1)"
+        in: query
+        name: page
+        schema:
+          type: integer
+      - description: "Number of items per page (default: 10)"
+        in: query
+        name: pageSize
+        schema:
+          type: integer
+      - description: Get users by field (optional)
+        in: query
+        name: getBy
+        schema:
+          enum:
+          - sub_dragon_id
+          type: string
+      - description: Get users by field value (optional)
+        in: query
+        name: getByValue
+        schema:
+          type: integer
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/users.UserListSchema'
+          description: Success
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/common.CommonErrorSchema'
+          description: Bad Request
+      summary: Get User List
+      tags:
+      - User
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/users.UserSchema'
+        description: query params
+        required: true
+      responses:
+        "201":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/entities.User'
+          description: Created
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/common.CommonErrorSchema'
+          description: Bad Request
+      summary: Create User
+      tags:
+      - User
+      x-codegen-request-body-name: request
+  /v1/users/{id}:
+    put:
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/users.UpdateUserSchema'
+        description: Request body for updating user
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/entities.User'
+          description: OK
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/common.CommonErrorSchema'
+          description: Bad Request
+      summary: Update User
+      tags:
+      - User
+      x-codegen-request-body-name: request
+  /v1/users/{userId}:
+    delete:
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: Success
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/common.CommonErrorSchema'
+          description: Bad Request
+        "404":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/common.CommonErrorSchema'
+          description: Not Found Request
+      summary: Delete user by ID
+      tags:
+      - User
+    get:
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/users.UserSchema'
+          description: Success
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/common.CommonErrorSchema'
+          description: Bad Request
+        "404":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/common.CommonErrorSchema'
+          description: Not Found Request
+      summary: Get user by ID
+      tags:
+      - User
+components:
+  schemas:
+    common.CommonErrorSchema:
+      properties:
+        error:
+          type: string
+      type: object
+    common.CommonPaginationSchema:
+      example:
+        pageSize: 5
+        hasNext: true
+        page: 1
+        totalCount: 5
+      properties:
+        hasNext:
+          type: boolean
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalCount:
+          type: integer
+      type: object
+    entities.User:
+      example:
+        createdAt: createdAt
+        deletedAt:
+          valid: true
+          time: time
+        subDragonId: 6
+        active: true
+        bio: bio
+        avatar: avatar
+        id: 0
+        email: email
+        updatedAt: updatedAt
+        username: username
+      properties:
+        active:
+          type: boolean
+        avatar:
+          type: string
+        bio:
+          type: string
+        createdAt:
+          type: string
+        deletedAt:
+          $ref: '#/components/schemas/gorm.DeletedAt'
+        email:
+          type: string
+        id:
+          type: integer
+        subDragonId:
+          type: integer
+        updatedAt:
+          type: string
+        username:
+          type: string
+      required:
+      - id
+      type: object
+    gorm.DeletedAt:
+      example:
+        valid: true
+        time: time
+      properties:
+        time:
+          type: string
+        valid:
+          description: Valid is true if Time is not NULL
+          type: boolean
+      type: object
+    users.UpdateUserSchema:
+      properties:
+        avatar:
+          type: string
+        bio:
+          type: string
+        email:
+          type: string
+        subDragonId:
+          type: integer
+        username:
+          maxLength: 30
+          minLength: 3
+          type: string
+      type: object
+    users.UserListSchema:
+      example:
+        pagination:
+          pageSize: 5
+          hasNext: true
+          page: 1
+          totalCount: 5
+        data:
+        - createdAt: createdAt
+          deletedAt:
+            valid: true
+            time: time
+          subDragonId: 6
+          active: true
+          bio: bio
+          avatar: avatar
+          id: 0
+          email: email
+          updatedAt: updatedAt
+          username: username
+        - createdAt: createdAt
+          deletedAt:
+            valid: true
+            time: time
+          subDragonId: 6
+          active: true
+          bio: bio
+          avatar: avatar
+          id: 0
+          email: email
+          updatedAt: updatedAt
+          username: username
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/entities.User'
+          type: array
+        pagination:
+          $ref: '#/components/schemas/common.CommonPaginationSchema'
+      type: object
+    users.UserSchema:
+      example:
+        subDragonId: 0
+        bio: bio
+        avatar: avatar
+        email: email
+        username: username
+      properties:
+        avatar:
+          type: string
+        bio:
+          type: string
+        email:
+          type: string
+        subDragonId:
+          type: integer
+        username:
+          maxLength: 30
+          minLength: 3
+          type: string
+      required:
+      - email
+      - username
+      type: object
+x-original-swagger-version: "2.0"

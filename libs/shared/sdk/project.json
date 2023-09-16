@@ -10,8 +10,10 @@
       "dependsOn": ["build-openAPI"],
       "executor": "nx:run-commands",
       "options": {
+        "cwd": "libs/shared/sdk",
         "commands": [
-          "npx openapi-generator-cli generate -i http://127.0.0.1:3333/v1/swagger/doc.json -o libs/shared/sdk/src/api/v1 -g typescript-axios --additional-properties=supportsES6=true,typescriptThreePlus=true --skip-validate-spec"
+          "npx openapi-generator-cli generate -i http://127.0.0.1:3333/v1/swagger/doc.json -o openapi -g go --additional-properties=isGoSubmodule=true,packageName=sdk",
+          "bash init.sh"
         ],
         "parallel": false
       },

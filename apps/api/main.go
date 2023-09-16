@@ -1,7 +1,7 @@
 package main
 
 import (
-	"dragon-threads/apps/api/internal/bootstrap"
+	"dragon-threads/apps/api/bootstrap"
 
 	_ "github.com/lib/pq"
 )
