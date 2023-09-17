@@ -25,17 +25,6 @@ func parsePaginationQuery(c *fiber.Ctx) (int, int) {
 	return page, pageSize
 }
 
-func parseGetByQuery(c *fiber.Ctx) (string, string) {
-	getBy := c.Query("getBy")
-	getByValue := c.Query("getByValue")
-	if getBy == "" || getByValue == "" {
-		getBy = "1"
-		getByValue = "1"
-	}
-
-	return getBy, getByValue
-}
-
 func parsePostIdParams(c *fiber.Ctx) (int, error) {
 	userIdStr := c.Params("userId")
 	userId, err := strconv.Atoi(userIdStr)
@@ -44,10 +33,10 @@ func parsePostIdParams(c *fiber.Ctx) (int, error) {
 	}
 	return userId, nil
 }
-func getPostsByQuery(getBy string, getByValue string, page int, pageSize int) ([]entities.Post, int64, error) {
+func getPostsByQuery(page int, pageSize int) ([]entities.Post, int64, error) {
 	// Retrieve user list based on query parameters
-	userList, total, err := postsRepository.GetPostList(getBy+"=?", page, pageSize, []interface{}{getByValue})
-	return userList, total, err
+	postList, total, err := postsRepository.GetPostList("1=1", page, pageSize, []interface{}{})
+	return postList, total, err
 }
 
 func updatePostFields(existingPost *entities.Post, updatedPost UpdatePostSchema) {

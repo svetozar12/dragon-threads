@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"dragon-threads/apps/api/routes/posts"
 	"dragon-threads/apps/api/routes/users"
 	"fmt"
 
@@ -26,6 +27,7 @@ func InitRoutes(app *fiber.App) {
 		return c.SendString("Hello from the api")
 	})
 	users.UsersRoute(v1)
+	posts.PostsRoute(v1)
 	v1.Get("/swagger/*", swagger.HandlerDefault) // default
 	fmt.Println("Routes Initialized")
 }

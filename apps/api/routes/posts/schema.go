@@ -6,17 +6,15 @@ import (
 )
 
 type PostSchema struct {
-	Title       string `json:"title"`
-	Content     string `json:"content"`
-	UserID      uint   `json:"user_id"` // Foreign key to User
-	SubDragonId int32  `json:"subDragonId"`
+	Title       string `json:"title" validate:"required,min=3,max=20"`
+	Content     string `json:"content" validate:"required,min=1,max=300"`
+	UserID      uint   `json:"user_id" validate:"required"` // Foreign key to User
+	SubDragonId int32  `json:"subDragonId" validate:"required"`
 }
 
 type UpdatePostSchema struct {
-	Title       string `json:"title"`
-	Content     string `json:"content"`
-	UserID      uint   `json:"user_id"` // Foreign key to User
-	SubDragonId int32  `json:"subDragonId"`
+	Title   string `json:"title" validate:"omitempty"`
+	Content string `json:"content" validate:"omitempty"`
 }
 
 type PostListSchema struct {

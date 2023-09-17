@@ -4,7 +4,6 @@ import (
 	"dragon-threads/apps/api/entities"
 	"dragon-threads/apps/api/pkg/common"
 	"dragon-threads/apps/api/repositories/postsRepository"
-	"fmt"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -38,10 +37,9 @@ func GetPostById(c *fiber.Ctx) error {
 // @Summary      Get Post List
 // @Tags         Post
 // @Accept       json
-// @Param page       query int false "Page number (default: 1)"
-// @Param pageSize   query int false "Number of items per page (default: 10)"
-// @Param getBy      query GetByEnum false "Get posts by field (optional)"
-// @Param getByValue query int false "Get posts by field value (optional)".
+// @Param page			query int false "Page number (default: 1)"
+// @Param pageSize		query int false "Number of items per page (default: 10)"
+// @Param subDragonId	query int false "Page number (default: 1)"
 // @Success      200  {object} posts.PostListSchema "Success"
 // @Failure 	 400  {object} common.CommonErrorSchema
 // @Router       /v1/posts [get]
@@ -49,11 +47,8 @@ func getPostList(c *fiber.Ctx) error {
 	// Parse pagination parameters
 	page, pageSize := parsePaginationQuery(c)
 
-	// Get query and value parameters
-	getBy, getByValue := parseGetByQuery(c)
-
 	// Get post list based on query parameters
-	postList, total, err := getPostsByQuery(getBy, getByValue, page, pageSize)
+	postList, total, err := getPostsByQuery(page, pageSize)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
 	}
@@ -136,7 +131,6 @@ func updatePost(c *fiber.Ctx) error {
 	}
 	// Update the post data
 	updatePostFields(existingPost, updatedPost)
-	fmt.Println(existingPost)
 	// Save the updated post data
 	newPost, err := postsRepository.UpdatePost(existingPost)
 	if err != nil {
