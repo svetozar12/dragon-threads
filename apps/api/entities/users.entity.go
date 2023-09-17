@@ -8,4 +8,5 @@ type User struct {
 	Bio         string `json:"bio"`
 	Active      bool   `json:"active"`
 	SubDragonId int32  `json:"subDragonId"`
+	Posts       []Post `json:"posts"` // One-to-many relationship with posts
 }

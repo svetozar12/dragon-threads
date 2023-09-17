@@ -9,7 +9,6 @@
 - Subdragon(works like subreddit)
 - Search
 - UserInteration
-- Metrics
 - Rate limitting and Throttling
 - ModerationTools
 - Voting
@@ -86,8 +85,3 @@ Reporting and Flagging:
 
     Report Post/Comment: POST /api/v1/reports
     Handle Reported Content: PUT /api/v1/moderation/handle-report/{report_id}
-
-Analytics and Metrics:
-
-    Get User Engagement Metrics: GET /api/v1/analytics/user/{user_id}
-    Get Post Metrics: GET /api/v1/analytics/posts/{post_id}
