@@ -17,6 +17,6 @@ func Open() {
 	if err != nil {
 		panic(err)
 	}
-	SQL.AutoMigrate(&entities.User{}, &entities.Post{})
+	SQL.AutoMigrate(&entities.User{}, &entities.Post{}, &entities.SubDragon{})
 	fmt.Println("SQL Initialized")
 }
