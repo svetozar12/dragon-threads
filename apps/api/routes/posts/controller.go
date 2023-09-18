@@ -45,7 +45,7 @@ func GetPostById(c *fiber.Ctx) error {
 // @Router       /v1/posts [get]
 func getPostList(c *fiber.Ctx) error {
 	// Parse pagination parameters
-	page, pageSize := parsePaginationQuery(c)
+	page, pageSize := common.ParsePaginationQuery(c)
 
 	// Get post list based on query parameters
 	postList, total, err := getPostsByQuery(page, pageSize)

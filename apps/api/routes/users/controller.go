@@ -53,7 +53,7 @@ func GetUserById(c *fiber.Ctx) error {
 // @Router       /v1/users [get]
 func getUserList(c *fiber.Ctx) error {
 	// Parse pagination parameters
-	page, pageSize := parsePaginationQuery(c)
+	page, pageSize := common.ParsePaginationQuery(c)
 
 	// Get query and value parameters
 	getBy, getByValue := parseGetByQuery(c)

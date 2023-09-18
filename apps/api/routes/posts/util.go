@@ -9,22 +9,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func parsePaginationQuery(c *fiber.Ctx) (int, int) {
-	pageStr := c.Query("page")
-	page, err := strconv.Atoi(pageStr)
-	if err != nil {
-		page = 1
-	}
-
-	pageSizeStr := c.Query("pageSize")
-	pageSize, err := strconv.Atoi(pageSizeStr)
-	if err != nil {
-		pageSize = 10
-	}
-
-	return page, pageSize
-}
-
 func parsePostIdParams(c *fiber.Ctx) (int, error) {
 	userIdStr := c.Params("userId")
 	userId, err := strconv.Atoi(userIdStr)

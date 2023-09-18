@@ -5,11 +5,11 @@ import (
 )
 
 func SubDragonsRoute(app fiber.Router) {
-	SubDragons := app.Group("/users")
+	SubDragons := app.Group("/subDragon")
 
 	SubDragons.Get("/", getSubDragonList)
-	SubDragons.Get("/:userId", GetSubDragonById)
+	SubDragons.Get("/:subDragonId", GetSubDragonById)
 	SubDragons.Post("/", createSubDragon)
-	SubDragons.Put("/:userId", updateSubDragon)
-	SubDragons.Delete("/:userId", deleteSubDragonById)
+	SubDragons.Put("/:subDragonId", updateSubDragon)
+	SubDragons.Delete("/:subDragonId", deleteSubDragonById)
 }

@@ -44,7 +44,7 @@ func GetSubDragonById(c *fiber.Ctx) error {
 // @Router       /v1/subDragon [get]
 func getSubDragonList(c *fiber.Ctx) error {
 	// Parse pagination parameters
-	page, pageSize := parsePaginationQuery(c)
+	page, pageSize := common.ParsePaginationQuery(c)
 
 	// Get subDragon list based on query parameters
 	subDragonList, total, err := subDragonRepository.GetSubDragonList("1=1", page, pageSize, []interface{}{})
