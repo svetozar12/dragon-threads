@@ -13,6 +13,7 @@ import (
 // @Tags Post
 // @Accept json
 // @Param postId path int false "Post ID"
+// @Security ApiKeyAuth
 // @Success 200 {object} posts.PostSchema "Success"
 // @Failure 400 {object} common.CommonErrorSchema "Bad Request"
 // @Failure 404 {object} common.CommonErrorSchema "Not Found Request"
@@ -40,6 +41,7 @@ func GetPostById(c *fiber.Ctx) error {
 // @Param page			query int false "Page number (default: 1)"
 // @Param pageSize		query int false "Number of items per page (default: 10)"
 // @Param subDragonId	query int false "Page number (default: 1)"
+// @Security ApiKeyAuth
 // @Success      200  {object} posts.PostListSchema "Success"
 // @Failure 	 400  {object} common.CommonErrorSchema
 // @Router       /v1/posts [get]
@@ -75,6 +77,7 @@ func getPostList(c *fiber.Ctx) error {
 // @Tags         Post
 // @Accept       json
 // @Param request body posts.PostSchema true "query params""
+// @Security ApiKeyAuth
 // @Success      201  {object} entities.Post
 // @Failure 	 400  {object} common.CommonErrorSchema
 // @Router       /v1/posts [post]
@@ -105,6 +108,7 @@ func createPost(c *fiber.Ctx) error {
 // @Accept       json
 // @Param id path string true "Post ID"
 // @Param request body posts.UpdatePostSchema true "Request body for updating post"
+// @Security ApiKeyAuth
 // @Success      200  {object} entities.Post
 // @Failure      400  {object} common.CommonErrorSchema
 // @Router       /v1/posts/{id} [put]
@@ -144,6 +148,7 @@ func updatePost(c *fiber.Ctx) error {
 // @Tags Post
 // @Accept json
 // @Param postId path int false "Post ID"
+// @Security ApiKeyAuth
 // @Success 200 {object} string "Success"
 // @Failure 400 {object} common.CommonErrorSchema "Bad Request"
 // @Failure 404 {object} common.CommonErrorSchema "Not Found Request"

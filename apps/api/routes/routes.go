@@ -1,7 +1,9 @@
 package routes
 
 import (
+	"dragon-threads/apps/api/routes/auth"
 	"dragon-threads/apps/api/routes/posts"
+	"dragon-threads/apps/api/routes/subDragon"
 	"dragon-threads/apps/api/routes/users"
 	"fmt"
 
@@ -20,6 +22,9 @@ import (
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 // @host localhost:3333
+// @securityDefinitions.apikey ApiKeyAuth
+// @In header
+// @Name Authorization
 // @BasePath /
 func InitRoutes(app *fiber.App) {
 	v1 := app.Group("/v1")
@@ -28,6 +33,8 @@ func InitRoutes(app *fiber.App) {
 	})
 	users.UsersRoute(v1)
 	posts.PostsRoute(v1)
+	subDragon.SubDragonsRoute(v1)
+	auth.AuthRoute(v1)
 	v1.Get("/swagger/*", swagger.HandlerDefault) // default
 	fmt.Println("Routes Initialized")
 }

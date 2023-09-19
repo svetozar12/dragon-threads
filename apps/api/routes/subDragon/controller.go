@@ -4,6 +4,7 @@ import (
 	"dragon-threads/apps/api/entities"
 	"dragon-threads/apps/api/pkg/common"
 	"dragon-threads/apps/api/repositories/subDragonRepository"
+	"dragon-threads/apps/api/repositories/usersRepository"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -13,6 +14,7 @@ import (
 // @Tags SubDragon
 // @Accept json
 // @Param subDragonId path int false "SubDragon ID"
+// @Security ApiKeyAuth
 // @Success 200 {object} entities.SubDragon "Success"
 // @Failure 400 {object} common.CommonErrorSchema "Bad Request"
 // @Failure 404 {object} common.CommonErrorSchema "Not Found Request"
@@ -39,6 +41,7 @@ func GetSubDragonById(c *fiber.Ctx) error {
 // @Accept       json
 // @Param page       query int false "Page number (default: 1)"
 // @Param pageSize   query int false "Number of items per page (default: 10)"
+// @Security ApiKeyAuth
 // @Success      200  {object} subDragon.SubDragonListSchema "Success"
 // @Failure 	 400  {object} common.CommonErrorSchema
 // @Router       /v1/subDragon [get]
@@ -74,31 +77,34 @@ func getSubDragonList(c *fiber.Ctx) error {
 // @Tags         SubDragon
 // @Accept       json
 // @Param request body subDragon.CreateSubDragonSchema true "query params""
+// @Security ApiKeyAuth
 // @Success      201  {object} entities.SubDragon
 // @Failure 	 400  {object} common.CommonErrorSchema
 // @Router       /v1/subDragon [post]
 func createSubDragon(c *fiber.Ctx) error {
-	var subDragon CreateSubDragonSchema
-	if err := c.BodyParser(&subDragon); err != nil {
+	var subDragonPayload CreateSubDragonSchema
+	if err := c.BodyParser(&subDragonPayload); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
 	}
 	validate := validator.New()
-	if err := validate.Struct(subDragon); err != nil {
+	if err := validate.Struct(subDragonPayload); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
 	}
 
-	_, err := subDragonRepository.GetSubDragon("name =?", subDragon.Name)
+	_, err := subDragonRepository.GetSubDragon("name =?", subDragonPayload.Name)
 	if err == nil {
 		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(SUB_DRAGON_ALREADY_EXIST))
 	}
-
-	_, err = subDragonRepository.CreateSubDragon(&entities.SubDragon{
-		Name:    subDragon.Name,
-		UserIds: []int32{subDragon.UserId},
+	user, _ := usersRepository.GetUser("id =?", subDragonPayload.UserId)
+	subDragon, err := subDragonRepository.CreateSubDragon(&entities.SubDragon{
+		Name: subDragonPayload.Name,
 	})
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
 	}
+	user.SubDragonId = int32(subDragon.ID)
+	usersRepository.UpdateUser(user)
+
 	return c.Status(fiber.StatusOK).JSON(subDragon)
 }
 
@@ -107,6 +113,7 @@ func createSubDragon(c *fiber.Ctx) error {
 // @Accept       json
 // @Param id path string true "SubDragon ID"
 // @Param request body subDragon.UpdateSubDragonSchema true "Request body for updating subDragon"
+// @Security ApiKeyAuth
 // @Success      200  {object} entities.SubDragon
 // @Failure      400  {object} common.CommonErrorSchema
 // @Router       /v1/subDragon/{id} [put]
@@ -146,6 +153,7 @@ func updateSubDragon(c *fiber.Ctx) error {
 // @Tags SubDragon
 // @Accept json
 // @Param subDragonId path int false "SubDragon ID"
+// @Security ApiKeyAuth
 // @Success 200 {object} string "Success"
 // @Failure 400 {object} common.CommonErrorSchema "Bad Request"
 // @Failure 404 {object} common.CommonErrorSchema "Not Found Request"
