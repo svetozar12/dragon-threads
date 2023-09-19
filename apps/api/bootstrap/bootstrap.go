@@ -25,6 +25,8 @@ func Bootstrap() {
 	}))
 	database.Open()
 	routes.InitRoutes(app)
-
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.Redirect("/v1/swagger", fiber.StatusTemporaryRedirect)
+	})
 	app.Listen(":" + env.Envs.Port)
 }

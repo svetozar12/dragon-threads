@@ -1,6 +1,7 @@
 package subDragon
 
 import (
+	"dragon-threads/apps/api/constants"
 	"dragon-threads/apps/api/entities"
 	"dragon-threads/apps/api/pkg/common"
 	"dragon-threads/apps/api/repositories/subDragonRepository"
@@ -19,7 +20,7 @@ import (
 // @Failure 400 {object} common.CommonErrorSchema "Bad Request"
 // @Failure 404 {object} common.CommonErrorSchema "Not Found Request"
 // @Router /v1/subDragon/{subDragonId} [get]
-func GetSubDragonById(c *fiber.Ctx) error {
+func getSubDragonById(c *fiber.Ctx) error {
 	// Parse pagination parameters
 	subDragonID, err := parseSubDragonIdParams(c)
 	if err != nil {
@@ -28,7 +29,7 @@ func GetSubDragonById(c *fiber.Ctx) error {
 	// Get subDragon list based on query parameters
 	subDragon, err := subDragonRepository.GetSubDragon("id =?", subDragonID)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(SUB_DRAGON_NOT_FOUND))
+		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(constants.SUB_DRAGON_NOT_FOUND))
 	}
 	// Construct the response
 	response := subDragon
@@ -93,7 +94,7 @@ func createSubDragon(c *fiber.Ctx) error {
 
 	_, err := subDragonRepository.GetSubDragon("name =?", subDragonPayload.Name)
 	if err == nil {
-		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(SUB_DRAGON_ALREADY_EXIST))
+		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(constants.SUB_DRAGON_ALREADY_EXIST))
 	}
 	user, _ := usersRepository.GetUser("id =?", subDragonPayload.UserId)
 	subDragon, err := subDragonRepository.CreateSubDragon(&entities.SubDragon{
@@ -167,7 +168,7 @@ func deleteSubDragonById(c *fiber.Ctx) error {
 	// Get subDragon list based on query parameters
 	subDragon, err := subDragonRepository.GetSubDragon("id =?", subDragonID)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(SUB_DRAGON_NOT_FOUND))
+		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(constants.SUB_DRAGON_NOT_FOUND))
 	}
 
 	_, err = subDragonRepository.DeleteSubDragon(subDragon)
@@ -175,7 +176,7 @@ func deleteSubDragonById(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
 	}
 	// Construct the response
-	response := SUB_DRAGON_SUCCESSFULLY_DELETED
+	response := constants.SUB_DRAGON_SUCCESSFULLY_DELETED
 
 	return c.Status(fiber.StatusOK).SendString(response)
 }

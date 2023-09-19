@@ -1,7 +1,7 @@
 package users
 
 import (
-	"dragon-threads/apps/api/entities"
+	"dragon-threads/apps/api/constants"
 	"dragon-threads/apps/api/pkg/common"
 	"dragon-threads/apps/api/repositories/usersRepository"
 	"fmt"
@@ -34,7 +34,7 @@ func GetUserById(c *fiber.Ctx) error {
 	// Get user list based on query parameters
 	user, err := usersRepository.GetUser("id =?", userID)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(USER_NOT_FOUND))
+		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(constants.USER_NOT_FOUND))
 	}
 	// Construct the response
 	response := user
@@ -81,41 +81,6 @@ func getUserList(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(response)
-}
-
-// Example godoc
-// @Summary      Create User
-// @Tags         User
-// @Accept       json
-// @Param request body users.UserSchema true "query params""
-// @Success      201  {object} entities.User
-// @Failure 	 400  {object} common.CommonErrorSchema
-// @Router       /v1/users [post]
-func createUser(c *fiber.Ctx) error {
-	var user UserSchema
-	if err := c.BodyParser(&user); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
-	}
-	validate := validator.New()
-	if err := validate.Struct(user); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
-	}
-	if isRegistered := isUserRegistered(user.Email, user.Username); isRegistered {
-		return c.Status(fiber.StatusConflict).JSON(common.FormatError(USER_ALREADY_EXIST))
-
-	}
-	_, err := usersRepository.CreateUser(&entities.User{
-		Username:    user.Username,
-		Email:       user.Email,
-		Bio:         user.Bio,
-		Avatar:      user.Avatar,
-		Active:      true,
-		SubDragonId: user.SubDragonId,
-	})
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
-	}
-	return c.Status(fiber.StatusOK).JSON(user)
 }
 
 // @Summary      Update User
@@ -178,7 +143,7 @@ func deleteUserById(c *fiber.Ctx) error {
 	// Get user list based on query parameters
 	user, err := usersRepository.GetUser("id =?", userID)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(USER_NOT_FOUND))
+		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(constants.USER_NOT_FOUND))
 	}
 
 	_, err = usersRepository.DeleteUser(user)
@@ -186,7 +151,7 @@ func deleteUserById(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
 	}
 	// Construct the response
-	response := USER_SUCCESSFULLY_DELETED
+	response := constants.USER_SUCCESSFULLY_DELETED
 
 	return c.Status(fiber.StatusOK).SendString(response)
 }

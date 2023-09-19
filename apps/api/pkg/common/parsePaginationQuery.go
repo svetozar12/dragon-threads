@@ -7,17 +7,26 @@ import (
 )
 
 func ParsePaginationQuery(c *fiber.Ctx) (int, int) {
-	pageStr := c.Query("page")
-	page, err := strconv.Atoi(pageStr)
-	if err != nil {
-		page = 1
-	}
-
-	pageSizeStr := c.Query("pageSize")
-	pageSize, err := strconv.Atoi(pageSizeStr)
-	if err != nil {
-		pageSize = 10
-	}
+	page := ParseIntQuery(c, "page", 1)
+	pageSize := ParseIntQuery(c, "pageSize", 10)
 
 	return page, pageSize
+}
+
+func ParseIntQuery(c *fiber.Ctx, queryName string, defaultValue int) int {
+	queryStr := c.Query(queryName)
+	query, err := strconv.Atoi(queryStr)
+	if err != nil {
+		query = defaultValue
+	}
+	return query
+}
+
+func ParseIntParam(c *fiber.Ctx, queryName string, defaultValue int) int {
+	queryStr := c.Params(queryName)
+	query, err := strconv.Atoi(queryStr)
+	if err != nil {
+		query = defaultValue
+	}
+	return query
 }

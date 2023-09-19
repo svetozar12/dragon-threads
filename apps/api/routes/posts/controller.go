@@ -1,6 +1,7 @@
 package posts
 
 import (
+	"dragon-threads/apps/api/constants"
 	"dragon-threads/apps/api/entities"
 	"dragon-threads/apps/api/pkg/common"
 	"dragon-threads/apps/api/repositories/postsRepository"
@@ -27,7 +28,7 @@ func GetPostById(c *fiber.Ctx) error {
 	// Get post list based on query parameters
 	post, err := postsRepository.GetPost("id =?", postID)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(POST_NOT_FOUND))
+		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(constants.POST_NOT_FOUND))
 	}
 	// Construct the response
 	response := post
@@ -40,7 +41,7 @@ func GetPostById(c *fiber.Ctx) error {
 // @Accept       json
 // @Param page			query int false "Page number (default: 1)"
 // @Param pageSize		query int false "Number of items per page (default: 10)"
-// @Param subDragonId	query int false "Page number (default: 1)"
+// @Param subDragonId	query int false "Search in SubDragonId"
 // @Security ApiKeyAuth
 // @Success      200  {object} posts.PostListSchema "Success"
 // @Failure 	 400  {object} common.CommonErrorSchema
@@ -48,9 +49,9 @@ func GetPostById(c *fiber.Ctx) error {
 func getPostList(c *fiber.Ctx) error {
 	// Parse pagination parameters
 	page, pageSize := common.ParsePaginationQuery(c)
-
+	preSubDragon := c.Locals(common.SUB_DRAGON_BY_ID).(entities.SubDragon)
 	// Get post list based on query parameters
-	postList, total, err := getPostsByQuery(page, pageSize)
+	postList, total, err := getPostsByQuery(page, pageSize, int(preSubDragon.ID))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
 	}
@@ -162,7 +163,7 @@ func deletePostById(c *fiber.Ctx) error {
 	// Get post list based on query parameters
 	post, err := postsRepository.GetPost("id =?", postID)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(POST_NOT_FOUND))
+		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(constants.POST_NOT_FOUND))
 	}
 
 	_, err = postsRepository.DeletePost(post)
@@ -170,7 +171,7 @@ func deletePostById(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
 	}
 	// Construct the response
-	response := POST_SUCCESSFULLY_DELETED
+	response := constants.POST_SUCCESSFULLY_DELETED
 
 	return c.Status(fiber.StatusOK).SendString(response)
 }
