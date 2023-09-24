@@ -2,12 +2,12 @@ package auth
 
 import (
 	"dragon-threads/apps/api/definitions"
-	"dragon-threads/apps/api/entities"
-	"dragon-threads/apps/api/pkg/common"
 	"dragon-threads/apps/api/pkg/env"
 	"dragon-threads/apps/api/pkg/oauth"
 	"dragon-threads/apps/api/routes/users"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/oauth2"
@@ -29,28 +29,32 @@ func githubCallback(c *fiber.Ctx) error {
 	code := c.Query("code")
 	token, err := oauth.GithubOauthConfig.Exchange(c.Context(), code)
 	if err != nil {
-		return c.JSON(common.FormatError("Error exchanging code for token"))
+		return c.Redirect(env.Envs.FRONTEND_URL)
 	}
 	client := oauth.GithubOauthConfig.Client(c.Context(), token)
 	resp, err := client.Get("https://api.github.com/user")
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Error fetching user details from GitHub",
-		})
+		return c.Redirect(env.Envs.FRONTEND_URL)
 	}
-	defer resp.Body.Close()
-
-	var userDetail map[string]definitions.GithubUser
-	if err := json.NewDecoder(resp.Body).Decode(&userDetail); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Error decoding user details response",
-		})
+	var user definitions.GithubUser
+	// Read the response body into a byte slice
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("Error reading response body:", err)
+		return c.Redirect(env.Envs.FRONTEND_URL)
 	}
-	preSubDragon := c.Locals(common.SUB_DRAGON_BY_ID).(entities.SubDragon)
+	// Unmarshal the JSON data into the GithubUser struct
+	err = json.Unmarshal(body, &user)
+	if err != nil {
+		fmt.Println("Error unmarshaling JSON:", err)
+		return c.Redirect(env.Envs.FRONTEND_URL)
+	}
+	email, err := getGithubUserEmail(client)
 	// Assuming you have a function to find or create the user
 	// Replace with your actual logic for finding or creating the user
-	for _, user := range userDetail {
-		users.FindOrCreateUser(c, users.UserSchema{Username: user.Login, Email: user.Email, Avatar: user.AvatarURL, Bio: user.Bio, SubDragonId: int32(preSubDragon.ID)})
+	_, err = users.FindOrCreateUser(c, users.UserSchema{Username: user.Login, Email: email, Avatar: user.AvatarURL, Bio: user.Bio})
+	if err != nil {
+		return c.Redirect(env.Envs.FRONTEND_URL)
 	}
 	// Set the access token as a cookie
 	c.Cookie(&fiber.Cookie{
