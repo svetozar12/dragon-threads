@@ -10,7 +10,7 @@ import (
 )
 
 func parsePostIdParams(c *fiber.Ctx) (int, error) {
-	userIdStr := c.Params("userId")
+	userIdStr := c.Params("postId")
 	userId, err := strconv.Atoi(userIdStr)
 	if err != nil {
 		return 0, fmt.Errorf("Post id is required")

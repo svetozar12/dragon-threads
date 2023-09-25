@@ -7,3 +7,4 @@ func Prefetch(resource string, value any, c *fiber.Ctx) {
 }
 
 const SUB_DRAGON_BY_ID = "SUB_DRAGON_BY_ID"
+const USER_BY_ID = "USER_BY_ID"

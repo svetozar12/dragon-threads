@@ -149,6 +149,8 @@ func updatePost(c *fiber.Ctx) error {
 // @Tags Post
 // @Accept json
 // @Param postId path int false "Post ID"
+// @Param subDragonId	query int false "Search in SubDragonId"
+// @Param userId		query int false "Search in UserId"
 // @Security ApiKeyAuth
 // @Success 200 {object} string "Success"
 // @Failure 400 {object} common.CommonErrorSchema "Bad Request"
@@ -156,12 +158,12 @@ func updatePost(c *fiber.Ctx) error {
 // @Router /v1/posts/{postId} [delete]
 func deletePostById(c *fiber.Ctx) error {
 	// Parse pagination parameters
-	postID, err := parsePostIdParams(c)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
-	}
+	postID := common.ParseIntParam(c, constants.POST_ID, 0)
+	subDragonID := common.ParseIntParam(c, constants.SUB_DRAGON_ID, 0)
+	userID := common.ParseIntParam(c, constants.USER_ID, 0)
+
 	// Get post list based on query parameters
-	post, err := postsRepository.GetPost("id =?", postID)
+	post, err := postsRepository.GetPost("id =? AND user_id =? AND sub_dragon_id =?", postID, userID, subDragonID)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(constants.POST_NOT_FOUND))
 	}

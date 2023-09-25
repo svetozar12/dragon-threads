@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"dragon-threads/apps/api/pkg/common"
-	"fmt"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
@@ -36,7 +35,6 @@ func validateToken(token string) bool {
 
 func OAuth2Middleware(c *fiber.Ctx) error {
 	token := c.Get("Authorization")
-	fmt.Println(token)
 	if token == "" {
 		return c.Status(fiber.StatusUnauthorized).JSON(common.FormatError(fiber.ErrUnauthorized.Message))
 	}
