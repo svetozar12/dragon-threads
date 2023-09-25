@@ -1,15 +1,21 @@
 package posts
 
 import (
+	"dragon-threads/apps/api/middleware"
+	"dragon-threads/apps/api/middleware/fetch"
+
 	"github.com/gofiber/fiber/v2"
 )
 
 func PostsRoute(app fiber.Router) {
-	Posts := app.Group("/posts")
+	posts := app.Group("/posts")
+	// Middlewares
+	posts.Use(middleware.OAuth2Middleware, fetch.FetchSubDragon)
 
-	Posts.Get("/", getPostList)
-	Posts.Get("/:postId", GetPostById)
-	Posts.Post("/", createPost)
-	Posts.Put("/:postId", updatePost)
-	Posts.Delete("/:postId", deletePostById)
+	// Routes
+	posts.Get("/", getPostList)
+	posts.Get("/:postId", GetPostById)
+	posts.Post("/", fetch.FetchUser, createPost)
+	posts.Put("/:postId", fetch.FetchUser, updatePost)
+	posts.Delete("/:postId", deletePostById)
 }

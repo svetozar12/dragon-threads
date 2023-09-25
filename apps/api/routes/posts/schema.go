@@ -8,7 +8,7 @@ import (
 type PostSchema struct {
 	Title       string `json:"title" validate:"required,min=3,max=20"`
 	Content     string `json:"content" validate:"required,min=1,max=300"`
-	UserID      uint   `json:"user_id" validate:"required"` // Foreign key to User
+	UserID      int32  `json:"user_id" validate:"required"` // Foreign key to User
 	SubDragonId int32  `json:"subDragonId" validate:"required"`
 }
 

@@ -1,4 +1,4 @@
-import { Configuration, UserApi } from './api/v1';
+import { Configuration, PostApi, SubDragonApi, UserApi } from './api/v1';
 
 const API_URL = `${process.env['NEXT_PUBLIC_SCHEMA'] || 'http'}://${
   process.env['NEXT_PUBLIC_HOST'] || 'localhost'
@@ -16,6 +16,8 @@ export const setToken = (token: string) => {
 
 export const sdk = {
   userInstance: () => new UserApi(config),
+  postInstance: () => new PostApi(config),
+  subDragonInstance: () => new SubDragonApi(config),
 };
 
 export * as API from './api/v1';

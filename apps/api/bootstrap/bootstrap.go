@@ -3,6 +3,7 @@ package bootstrap
 import (
 	"dragon-threads/apps/api/database"
 	"dragon-threads/apps/api/pkg/env"
+	"dragon-threads/apps/api/pkg/oauth"
 	"dragon-threads/apps/api/routes"
 
 	"github.com/gofiber/fiber/v2"
@@ -13,6 +14,7 @@ import (
 func Bootstrap() {
 
 	env.InitConfig()
+	oauth.InitGithubOauth()
 	fastergoding.Run()
 	app := fiber.New()
 	app.Use(cors.New(cors.Config{
@@ -23,6 +25,8 @@ func Bootstrap() {
 	}))
 	database.Open()
 	routes.InitRoutes(app)
-
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.Redirect("/v1/swagger", fiber.StatusTemporaryRedirect)
+	})
 	app.Listen(":" + env.Envs.Port)
 }

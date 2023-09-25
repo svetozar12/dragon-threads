@@ -10,16 +10,16 @@ import (
 )
 
 func parsePostIdParams(c *fiber.Ctx) (int, error) {
-	userIdStr := c.Params("userId")
+	userIdStr := c.Params("postId")
 	userId, err := strconv.Atoi(userIdStr)
 	if err != nil {
 		return 0, fmt.Errorf("Post id is required")
 	}
 	return userId, nil
 }
-func getPostsByQuery(page int, pageSize int) ([]entities.Post, int64, error) {
+func getPostsByQuery(page int, pageSize int, subDragonId int) ([]entities.Post, int64, error) {
 	// Retrieve user list based on query parameters
-	postList, total, err := postsRepository.GetPostList("1=1", page, pageSize, []interface{}{})
+	postList, total, err := postsRepository.GetPostList("sub_dragon_id=?", page, pageSize, []interface{}{subDragonId})
 	return postList, total, err
 }
 

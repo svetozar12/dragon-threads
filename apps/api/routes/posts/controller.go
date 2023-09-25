@@ -1,6 +1,7 @@
 package posts
 
 import (
+	"dragon-threads/apps/api/constants"
 	"dragon-threads/apps/api/entities"
 	"dragon-threads/apps/api/pkg/common"
 	"dragon-threads/apps/api/repositories/postsRepository"
@@ -13,6 +14,7 @@ import (
 // @Tags Post
 // @Accept json
 // @Param postId path int false "Post ID"
+// @Security ApiKeyAuth
 // @Success 200 {object} posts.PostSchema "Success"
 // @Failure 400 {object} common.CommonErrorSchema "Bad Request"
 // @Failure 404 {object} common.CommonErrorSchema "Not Found Request"
@@ -26,7 +28,7 @@ func GetPostById(c *fiber.Ctx) error {
 	// Get post list based on query parameters
 	post, err := postsRepository.GetPost("id =?", postID)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(POST_NOT_FOUND))
+		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(constants.POST_NOT_FOUND))
 	}
 	// Construct the response
 	response := post
@@ -39,16 +41,17 @@ func GetPostById(c *fiber.Ctx) error {
 // @Accept       json
 // @Param page			query int false "Page number (default: 1)"
 // @Param pageSize		query int false "Number of items per page (default: 10)"
-// @Param subDragonId	query int false "Page number (default: 1)"
+// @Param subDragonId	query int false "Search in SubDragonId"
+// @Security ApiKeyAuth
 // @Success      200  {object} posts.PostListSchema "Success"
 // @Failure 	 400  {object} common.CommonErrorSchema
 // @Router       /v1/posts [get]
 func getPostList(c *fiber.Ctx) error {
 	// Parse pagination parameters
 	page, pageSize := common.ParsePaginationQuery(c)
-
+	preSubDragon := c.Locals(common.SUB_DRAGON_BY_ID).(entities.SubDragon)
 	// Get post list based on query parameters
-	postList, total, err := getPostsByQuery(page, pageSize)
+	postList, total, err := getPostsByQuery(page, pageSize, int(preSubDragon.ID))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
 	}
@@ -75,6 +78,7 @@ func getPostList(c *fiber.Ctx) error {
 // @Tags         Post
 // @Accept       json
 // @Param request body posts.PostSchema true "query params""
+// @Security ApiKeyAuth
 // @Success      201  {object} entities.Post
 // @Failure 	 400  {object} common.CommonErrorSchema
 // @Router       /v1/posts [post]
@@ -105,6 +109,7 @@ func createPost(c *fiber.Ctx) error {
 // @Accept       json
 // @Param id path string true "Post ID"
 // @Param request body posts.UpdatePostSchema true "Request body for updating post"
+// @Security ApiKeyAuth
 // @Success      200  {object} entities.Post
 // @Failure      400  {object} common.CommonErrorSchema
 // @Router       /v1/posts/{id} [put]
@@ -144,20 +149,23 @@ func updatePost(c *fiber.Ctx) error {
 // @Tags Post
 // @Accept json
 // @Param postId path int false "Post ID"
+// @Param subDragonId	query int false "Search in SubDragonId"
+// @Param userId		query int false "Search in UserId"
+// @Security ApiKeyAuth
 // @Success 200 {object} string "Success"
 // @Failure 400 {object} common.CommonErrorSchema "Bad Request"
 // @Failure 404 {object} common.CommonErrorSchema "Not Found Request"
 // @Router /v1/posts/{postId} [delete]
 func deletePostById(c *fiber.Ctx) error {
 	// Parse pagination parameters
-	postID, err := parsePostIdParams(c)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
-	}
+	postID := common.ParseIntParam(c, constants.POST_ID, 0)
+	subDragonID := common.ParseIntParam(c, constants.SUB_DRAGON_ID, 0)
+	userID := common.ParseIntParam(c, constants.USER_ID, 0)
+
 	// Get post list based on query parameters
-	post, err := postsRepository.GetPost("id =?", postID)
+	post, err := postsRepository.GetPost("id =? AND user_id =? AND sub_dragon_id =?", postID, userID, subDragonID)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(POST_NOT_FOUND))
+		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(constants.POST_NOT_FOUND))
 	}
 
 	_, err = postsRepository.DeletePost(post)
@@ -165,7 +173,7 @@ func deletePostById(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
 	}
 	// Construct the response
-	response := POST_SUCCESSFULLY_DELETED
+	response := constants.POST_SUCCESSFULLY_DELETED
 
 	return c.Status(fiber.StatusOK).SendString(response)
 }

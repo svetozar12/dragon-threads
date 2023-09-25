@@ -1,7 +1,7 @@
 package users
 
 import (
-	"dragon-threads/apps/api/entities"
+	"dragon-threads/apps/api/constants"
 	"dragon-threads/apps/api/pkg/common"
 	"dragon-threads/apps/api/repositories/usersRepository"
 	"fmt"
@@ -20,6 +20,7 @@ const (
 // @Tags User
 // @Accept json
 // @Param userId path int false "User ID"
+// @Security ApiKeyAuth
 // @Success 200 {object} users.UserSchema "Success"
 // @Failure 400 {object} common.CommonErrorSchema "Bad Request"
 // @Failure 404 {object} common.CommonErrorSchema "Not Found Request"
@@ -33,7 +34,7 @@ func GetUserById(c *fiber.Ctx) error {
 	// Get user list based on query parameters
 	user, err := usersRepository.GetUser("id =?", userID)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(USER_NOT_FOUND))
+		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(constants.USER_NOT_FOUND))
 	}
 	// Construct the response
 	response := user
@@ -48,6 +49,7 @@ func GetUserById(c *fiber.Ctx) error {
 // @Param pageSize   query int false "Number of items per page (default: 10)"
 // @Param getBy      query GetByEnum false "Get users by field (optional)"
 // @Param getByValue query int false "Get users by field value (optional)".
+// @Security ApiKeyAuth
 // @Success      200  {object} users.UserListSchema "Success"
 // @Failure 	 400  {object} common.CommonErrorSchema
 // @Router       /v1/users [get]
@@ -81,46 +83,12 @@ func getUserList(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(response)
 }
 
-// Example godoc
-// @Summary      Create User
-// @Tags         User
-// @Accept       json
-// @Param request body users.UserSchema true "query params""
-// @Success      201  {object} entities.User
-// @Failure 	 400  {object} common.CommonErrorSchema
-// @Router       /v1/users [post]
-func createUser(c *fiber.Ctx) error {
-	var user UserSchema
-	if err := c.BodyParser(&user); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
-	}
-	validate := validator.New()
-	if err := validate.Struct(user); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
-	}
-	if isRegistered := isUserRegistered(user.Email, user.Username); isRegistered {
-		return c.Status(fiber.StatusConflict).JSON(common.FormatError(USER_ALREADY_EXIST))
-
-	}
-	_, err := usersRepository.CreateUser(&entities.User{
-		Username:    user.Username,
-		Email:       user.Email,
-		Bio:         user.Bio,
-		Avatar:      user.Avatar,
-		Active:      true,
-		SubDragonId: user.SubDragonId,
-	})
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
-	}
-	return c.Status(fiber.StatusOK).JSON(user)
-}
-
 // @Summary      Update User
 // @Tags         User
 // @Accept       json
 // @Param id path string true "User ID"
 // @Param request body users.UpdateUserSchema true "Request body for updating user"
+// @Security ApiKeyAuth
 // @Success      200  {object} entities.User
 // @Failure      400  {object} common.CommonErrorSchema
 // @Router       /v1/users/{id} [put]
@@ -161,6 +129,7 @@ func updateUser(c *fiber.Ctx) error {
 // @Tags User
 // @Accept json
 // @Param userId path int false "User ID"
+// @Security ApiKeyAuth
 // @Success 200 {object} string "Success"
 // @Failure 400 {object} common.CommonErrorSchema "Bad Request"
 // @Failure 404 {object} common.CommonErrorSchema "Not Found Request"
@@ -174,7 +143,7 @@ func deleteUserById(c *fiber.Ctx) error {
 	// Get user list based on query parameters
 	user, err := usersRepository.GetUser("id =?", userID)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(USER_NOT_FOUND))
+		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(constants.USER_NOT_FOUND))
 	}
 
 	_, err = usersRepository.DeleteUser(user)
@@ -182,7 +151,7 @@ func deleteUserById(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
 	}
 	// Construct the response
-	response := USER_SUCCESSFULLY_DELETED
+	response := constants.USER_SUCCESSFULLY_DELETED
 
 	return c.Status(fiber.StatusOK).SendString(response)
 }
