@@ -13,18 +13,16 @@ func FetchUser(c *fiber.Ctx) error {
 	defaultValue := 0
 	query := common.ParseIntQuery(c, constants.USER_ID, defaultValue)
 	param := common.ParseIntParam(c, constants.USER_ID, defaultValue)
-	body, err := getUserIdFromBody(c)
+	body, _ := getUserIdFromBody(c)
 	userId := query | param | body
-
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
+	if isFetched := common.IsResourceFetched(common.USER_BY_ID(userId), c); isFetched {
+		return c.Next()
 	}
-
 	value, err := usersRepository.GetUser("id=?", userId)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(constants.USER_NOT_FOUND))
 	}
-	common.Prefetch(common.USER_BY_ID, value, c)
+	common.Prefetch(common.USER_BY_ID(userId), value, c)
 	// Call the next middleware or handler
 	return c.Next()
 }
