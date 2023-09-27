@@ -14,6 +14,7 @@ import (
 // @Tags Post
 // @Accept json
 // @Param postId path int false "Post ID"
+// @Param subDragonId	query int false "Search in SubDragonId"
 // @Security ApiKeyAuth
 // @Success 200 {object} posts.PostSchema "Success"
 // @Failure 400 {object} common.CommonErrorSchema "Bad Request"
@@ -21,12 +22,12 @@ import (
 // @Router /v1/posts/{postId} [get]
 func GetPostById(c *fiber.Ctx) error {
 	// Parse pagination parameters
-	postID, err := parsePostIdParams(c)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
-	}
+	postID := common.ParseIntParam(c, constants.POST_ID, 0)
+	preSubDragon := c.Locals(common.SUB_DRAGON_BY_ID).(entities.SubDragon)
+	preUser := c.Locals(common.USER_BY_ID).(entities.User)
+
 	// Get post list based on query parameters
-	post, err := postsRepository.GetPost("id =?", postID)
+	post, err := postsRepository.GetPost("id =? AND sub_dragon_id =? AND user_id =?", postID, preSubDragon.ID, preUser.ID)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(constants.POST_NOT_FOUND))
 	}
@@ -108,6 +109,7 @@ func createPost(c *fiber.Ctx) error {
 // @Tags         Post
 // @Accept       json
 // @Param id path string true "Post ID"
+// @Param subDragonId	query int false "Search in SubDragonId"
 // @Param request body posts.UpdatePostSchema true "Request body for updating post"
 // @Security ApiKeyAuth
 // @Success      200  {object} entities.Post
@@ -115,7 +117,7 @@ func createPost(c *fiber.Ctx) error {
 // @Router       /v1/posts/{id} [put]
 func updatePost(c *fiber.Ctx) error {
 	// Retrieve the post ID from the request path
-	postID := c.Params("postId")
+	postID := common.ParseIntParam(c, constants.POST_ID, 0)
 
 	// Retrieve the updated post data from the request body
 	var updatedPost UpdatePostSchema
@@ -159,11 +161,11 @@ func updatePost(c *fiber.Ctx) error {
 func deletePostById(c *fiber.Ctx) error {
 	// Parse pagination parameters
 	postID := common.ParseIntParam(c, constants.POST_ID, 0)
-	subDragonID := common.ParseIntParam(c, constants.SUB_DRAGON_ID, 0)
-	userID := common.ParseIntParam(c, constants.USER_ID, 0)
+	preSubDragon := c.Locals(common.SUB_DRAGON_BY_ID).(entities.SubDragon)
+	preUser := c.Locals(common.USER_BY_ID).(entities.User)
 
 	// Get post list based on query parameters
-	post, err := postsRepository.GetPost("id =? AND user_id =? AND sub_dragon_id =?", postID, userID, subDragonID)
+	post, err := postsRepository.GetPost("id =? AND user_id =? AND sub_dragon_id =?", postID, preUser.ID, preSubDragon.ID)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(constants.POST_NOT_FOUND))
 	}
