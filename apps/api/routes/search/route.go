@@ -13,5 +13,6 @@ func SearchRoute(app fiber.Router) {
 
 	// Routes
 	Search.Get("/users", SearchUsers)
-
+	Search.Get("/subDragons", SearchSubDragons)
+	Search.Get("/posts", SearchPosts)
 }

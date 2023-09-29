@@ -23,6 +23,24 @@ func GetPostList(query string, page int, pageSize int, args []interface{}) ([]en
 	err = database.SQL.Where(query, args...).Offset(offset).Limit(pageSize).Find(&posts).Error
 	return posts, total, err
 }
+
+func SearchPostByText(query string, page int, pageSize int) ([]entities.Post, int64, error) {
+	var total int64
+
+	likeQuery := "title LIKE ?"
+	args := []interface{}{"%" + query + "%"}
+
+	err := database.SQL.Model(&entities.Post{}).Where(likeQuery, args...).Count(&total).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	offset := (page - 1) * pageSize
+	posts := []entities.Post{}
+	err = database.SQL.Where(likeQuery, args...).Offset(offset).Limit(pageSize).Find(&posts).Error
+	return posts, total, err
+}
+
 func CreatePost(post *entities.Post) (*entities.Post, error) {
 	err := database.SQL.Create(post).Error
 	return post, err
