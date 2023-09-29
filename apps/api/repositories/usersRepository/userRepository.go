@@ -23,6 +23,24 @@ func GetUserList(query string, page int, pageSize int, args []interface{}) ([]en
 	err = database.SQL.Where(query, args...).Offset(offset).Limit(pageSize).Find(&users).Error
 	return users, total, err
 }
+
+func SearchUsersByText(query string, page int, pageSize int) ([]entities.User, int64, error) {
+	var total int64
+
+	likeQuery := "username LIKE ?"
+	args := []interface{}{"%" + query + "%"}
+
+	err := database.SQL.Model(&entities.User{}).Where(likeQuery, args...).Count(&total).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	offset := (page - 1) * pageSize
+	users := []entities.User{}
+	err = database.SQL.Where(likeQuery, args...).Offset(offset).Limit(pageSize).Find(&users).Error
+	return users, total, err
+}
+
 func CreateUser(user *entities.User) (*entities.User, error) {
 	err := database.SQL.Create(user).Error
 	return user, err

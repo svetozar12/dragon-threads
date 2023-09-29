@@ -3,6 +3,7 @@ package routes
 import (
 	"dragon-threads/apps/api/routes/auth"
 	"dragon-threads/apps/api/routes/posts"
+	"dragon-threads/apps/api/routes/search"
 	"dragon-threads/apps/api/routes/subDragon"
 	"dragon-threads/apps/api/routes/users"
 	"fmt"
@@ -35,6 +36,7 @@ func InitRoutes(app *fiber.App) {
 	posts.PostsRoute(v1)
 	subDragon.SubDragonsRoute(v1)
 	auth.AuthRoute(v1)
+	search.SearchRoute(v1)
 	v1.Get("/swagger/*", swagger.HandlerDefault) // default
 	fmt.Println("Routes Initialized")
 }
