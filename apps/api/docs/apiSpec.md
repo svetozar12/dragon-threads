@@ -17,16 +17,15 @@
 
 Users:
 
-    Create User: POST /api/v1/users
     Get User by ID: GET /api/v1/users/{user_id}
     Update User: PUT /api/v1/users/{user_id}
     Delete User: DELETE /api/v1/users/{user_id}
     List Users: GET /api/v1/users
 
-Authentication (OAuth with Google):
+Authentication (OAuth with Github):
 
-    Initiate Google OAuth: POST /api/v1/auth/google
-    Exchange Google OAuth Code for Access Token: POST /api/v1/auth/google/token
+    Initiate Github OAuth: POST /api/v1/auth/gitHub
+    Exchange Google OAuth Code for Access Token: POST /api/v1/auth/gitHub/callback
     Logout User: POST /api/v1/auth/logout
 
 Posts:
