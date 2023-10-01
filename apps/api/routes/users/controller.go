@@ -2,9 +2,9 @@ package users
 
 import (
 	"dragon-threads/apps/api/constants"
+	"dragon-threads/apps/api/entities"
 	"dragon-threads/apps/api/pkg/common"
 	"dragon-threads/apps/api/repositories/usersRepository"
-	"fmt"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -26,18 +26,9 @@ const (
 // @Failure 404 {object} common.CommonErrorSchema "Not Found Request"
 // @Router /v1/users/{userId} [get]
 func GetUserById(c *fiber.Ctx) error {
-	// Parse pagination parameters
-	userID, err := parseUserIdParams(c)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
-	}
-	// Get user list based on query parameters
-	user, err := usersRepository.GetUser("id =?", userID)
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(constants.USER_NOT_FOUND))
-	}
+	preUser := c.Locals(common.USER_BY_ID).(entities.User)
 	// Construct the response
-	response := user
+	response := preUser
 
 	return c.Status(fiber.StatusOK).JSON(response)
 }
@@ -93,9 +84,7 @@ func getUserList(c *fiber.Ctx) error {
 // @Failure      400  {object} common.CommonErrorSchema
 // @Router       /v1/users/{id} [put]
 func updateUser(c *fiber.Ctx) error {
-	// Retrieve the user ID from the request path
-	userID := c.Params("userId")
-
+	preUser := c.Locals(common.USER_BY_ID).(*entities.User)
 	// Retrieve the updated user data from the request body
 	var updatedUser UpdateUserSchema
 	if err := c.BodyParser(&updatedUser); err != nil {
@@ -108,16 +97,10 @@ func updateUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
 	}
 
-	// Check if the user with the given ID exists
-	existingUser, err := usersRepository.GetUser("id =?", userID)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
-	}
 	// Update the user data
-	updateUserFields(existingUser, updatedUser)
-	fmt.Println(existingUser)
+	updateUserFields(preUser, updatedUser)
 	// Save the updated user data
-	newUser, err := usersRepository.UpdateUser(existingUser)
+	newUser, err := usersRepository.UpdateUser(preUser)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
 	}
@@ -135,18 +118,8 @@ func updateUser(c *fiber.Ctx) error {
 // @Failure 404 {object} common.CommonErrorSchema "Not Found Request"
 // @Router /v1/users/{userId} [delete]
 func deleteUserById(c *fiber.Ctx) error {
-	// Parse pagination parameters
-	userID, err := parseUserIdParams(c)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
-	}
-	// Get user list based on query parameters
-	user, err := usersRepository.GetUser("id =?", userID)
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(constants.USER_NOT_FOUND))
-	}
-
-	_, err = usersRepository.DeleteUser(user)
+	preUser := c.Locals(common.USER_BY_ID).(*entities.User)
+	_, err := usersRepository.DeleteUser(preUser)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
 	}

@@ -5,9 +5,9 @@ import (
 	"dragon-threads/apps/api/repositories/postsRepository"
 )
 
-func getPostsByQuery(page int, pageSize int, subDragonId int) ([]entities.Post, int64, error) {
+func getPostsByQuery(page int, pageSize int, subDragonId int, userId int) ([]entities.Post, int64, error) {
 	// Retrieve user list based on query parameters
-	postList, total, err := postsRepository.GetPostList("sub_dragon_id=?", page, pageSize, []interface{}{subDragonId})
+	postList, total, err := postsRepository.GetPostList("sub_dragon_id=? AND user_id=?", page, pageSize, []interface{}{subDragonId, userId})
 	return postList, total, err
 }
 

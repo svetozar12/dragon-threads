@@ -16,5 +16,5 @@ func SubDragonsRoute(app fiber.Router) {
 	subDragons.Get("/:subDragonId", fetch.FetchSubDragon, getSubDragonById)
 	subDragons.Post("/", createSubDragon)
 	subDragons.Put("/:subDragonId", fetch.FetchSubDragon, updateSubDragon)
-	subDragons.Delete("/:subDragonId", fetch.FetchSubDragon, deleteSubDragonById)
+	subDragons.Delete("/:subDragonId", fetch.FetchSubDragon, fetch.FetchUser, deleteSubDragonById)
 }

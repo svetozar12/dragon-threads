@@ -24,11 +24,14 @@ func GetPostList(query string, page int, pageSize int, args []interface{}) ([]en
 	return posts, total, err
 }
 
-func SearchPostByText(query string, page int, pageSize int) ([]entities.Post, int64, error) {
+func SearchPostByText(query string, page int, pageSize int, subDragonId int) ([]entities.Post, int64, error) {
 	var total int64
 
 	likeQuery := "title LIKE ?"
 	args := []interface{}{"%" + query + "%"}
+
+	likeQuery += " AND sub_dragon_id = ?"
+	args = append(args, subDragonId)
 
 	err := database.SQL.Model(&entities.Post{}).Where(likeQuery, args...).Count(&total).Error
 	if err != nil {

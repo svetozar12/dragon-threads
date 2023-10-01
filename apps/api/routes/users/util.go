@@ -5,7 +5,6 @@ import (
 	"dragon-threads/apps/api/pkg/common"
 	"dragon-threads/apps/api/repositories/usersRepository"
 	"fmt"
-	"strconv"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -36,14 +35,6 @@ func parseGetByQuery(c *fiber.Ctx) (string, string) {
 	return getBy, getByValue
 }
 
-func parseUserIdParams(c *fiber.Ctx) (int, error) {
-	userIdStr := c.Params("userId")
-	userId, err := strconv.Atoi(userIdStr)
-	if err != nil {
-		return 0, fmt.Errorf("User id is required")
-	}
-	return userId, nil
-}
 func getUsersByQuery(getBy string, getByValue string, page int, pageSize int) ([]entities.User, int64, error) {
 	// Retrieve user list based on query parameters
 	userList, total, err := usersRepository.GetUserList(getBy+"=?", page, pageSize, []interface{}{getByValue})

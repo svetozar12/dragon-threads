@@ -162,11 +162,12 @@ func updateSubDragon(c *fiber.Ctx) error {
 func deleteSubDragonById(c *fiber.Ctx) error {
 	// Parse pagination parameters
 	subDragonID, err := parseSubDragonIdParams(c)
+	preUser := c.Locals(common.USER_BY_ID).(entities.User)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
 	}
 	// Get subDragon list based on query parameters
-	subDragon, err := subDragonRepository.GetSubDragon("id =?", subDragonID)
+	subDragon, err := subDragonRepository.GetSubDragon("id =? AND user_id =?", subDragonID, preUser.ID)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(common.FormatError(constants.SUB_DRAGON_NOT_FOUND))
 	}

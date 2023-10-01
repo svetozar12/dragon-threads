@@ -2,6 +2,7 @@ package users
 
 import (
 	"dragon-threads/apps/api/middleware"
+	"dragon-threads/apps/api/middleware/fetch"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -13,7 +14,7 @@ func UsersRoute(app fiber.Router) {
 
 	// Routes
 	Users.Get("/", getUserList)
-	Users.Get("/:userId", GetUserById)
+	Users.Get("/:userId", fetch.FetchUser, GetUserById)
 	Users.Put("/:userId", updateUser)
 	Users.Delete("/:userId", deleteUserById)
 }

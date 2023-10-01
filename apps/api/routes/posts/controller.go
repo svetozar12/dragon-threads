@@ -51,8 +51,10 @@ func getPostList(c *fiber.Ctx) error {
 	// Parse pagination parameters
 	page, pageSize := common.ParsePaginationQuery(c)
 	preSubDragon := c.Locals(common.SUB_DRAGON_BY_ID).(entities.SubDragon)
+	preUser := c.Locals(common.USER_BY_ID).(entities.User)
+
 	// Get post list based on query parameters
-	postList, total, err := getPostsByQuery(page, pageSize, int(preSubDragon.ID))
+	postList, total, err := getPostsByQuery(page, pageSize, int(preSubDragon.ID), int(preUser.ID))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
 	}
@@ -118,7 +120,8 @@ func createPost(c *fiber.Ctx) error {
 func updatePost(c *fiber.Ctx) error {
 	// Retrieve the post ID from the request path
 	postID := common.ParseIntParam(c, constants.POST_ID, 0)
-
+	preSubDragon := c.Locals(common.SUB_DRAGON_BY_ID).(entities.SubDragon)
+	preUser := c.Locals(common.USER_BY_ID).(entities.User)
 	// Retrieve the updated post data from the request body
 	var updatedPost UpdatePostSchema
 	if err := c.BodyParser(&updatedPost); err != nil {
@@ -132,7 +135,7 @@ func updatePost(c *fiber.Ctx) error {
 	}
 
 	// Check if the post with the given ID exists
-	existingPost, err := postsRepository.GetPost("id =?", postID)
+	existingPost, err := postsRepository.GetPost("id =? AND user_id=? AND sub_dragon_id=?", postID, preUser.ID, preSubDragon.ID)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(common.FormatError(err.Error()))
 	}

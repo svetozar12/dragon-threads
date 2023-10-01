@@ -6,6 +6,6 @@ import (
 
 func AuthRoute(app fiber.Router) {
 	Auth := app.Group("/auth")
-	Auth.Get("/login", login)
-	Auth.Get("/callback", githubCallback)
+	Auth.Get("/github", login)
+	Auth.Get("/github/callback", githubCallback)
 }

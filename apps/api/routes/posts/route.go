@@ -13,9 +13,9 @@ func PostsRoute(app fiber.Router) {
 	posts.Use(middleware.OAuth2Middleware, fetch.FetchSubDragon)
 
 	// Routes
-	posts.Get("/", fetch.FetchSubDragon, getPostList)
-	posts.Get("/:postId", fetch.FetchSubDragon, GetPostById)
+	posts.Get("/", fetch.FetchSubDragon, fetch.FetchUser, getPostList)
+	posts.Get("/:postId", fetch.FetchSubDragon, fetch.FetchUser, GetPostById)
 	posts.Post("/", fetch.FetchSubDragon, fetch.FetchUser, createPost)
 	posts.Put("/:postId", fetch.FetchSubDragon, fetch.FetchUser, updatePost)
-	posts.Delete("/:postId", fetch.FetchSubDragon, deletePostById)
+	posts.Delete("/:postId", fetch.FetchSubDragon, fetch.FetchUser, deletePostById)
 }
