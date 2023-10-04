@@ -2,17 +2,17 @@ package postComment
 
 import (
 	"dragon-threads/apps/api/entities"
-	"dragon-threads/apps/api/repositories/postsRepository"
+	"dragon-threads/apps/api/repositories/postCommentRepository"
 )
 
-func getPostsByQuery(page int, pageSize int, subDragonId int, userId int) ([]entities.Post, int64, error) {
+func getPostCommentListByQuery(page int, pageSize int, postID int) ([]entities.PostComment, int64, error) {
 	// Retrieve user list based on query parameters
-	postList, total, err := postsRepository.GetPostList("sub_dragon_id=? AND user_id=?", page, pageSize, []interface{}{subDragonId, userId})
+	postList, total, err := postCommentRepository.GetPostCommentList("post_id=?", page, pageSize, []interface{}{postID})
 	return postList, total, err
 }
 
-func updatePostFields(existingPost *entities.Post, updatedPost UpdatePostCommentSchema) {
-	if updatedPost.Comment != "" {
-		existingPost.Title = updatedPost.Comment
+func updatePostCommentFields(existingPost *entities.PostComment, updatedPost UpdatePostCommentSchema) {
+	if updatedPost.Comment != existingPost.Comment {
+		existingPost.Comment = updatedPost.Comment
 	}
 }

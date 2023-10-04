@@ -34,7 +34,7 @@ func getUserIdFromBody(c *fiber.Ctx) (int, error) {
 	}
 
 	// Check if the "userId" is provided in the request body
-	userIdFromBody, ok := requestBody["userId"].(int)
+	userIdFromBody, ok := requestBody[constants.USER_ID].(int)
 	if !ok {
 		userIdFromBody = 0 // If userId is not provided or not an integer, use a default value
 	}

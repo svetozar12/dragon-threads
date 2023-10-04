@@ -11,8 +11,8 @@ import (
 
 func FetchSubDragon(c *fiber.Ctx) error {
 	defaultValue := 0
-	query := common.ParseIntQuery(c, "subDragonId", defaultValue)
-	param := common.ParseIntParam(c, "subDragonId", defaultValue)
+	query := common.ParseIntQuery(c, constants.SUB_DRAGON_ID, defaultValue)
+	param := common.ParseIntParam(c, constants.SUB_DRAGON_ID, defaultValue)
 	body, _ := getSubdragonIdFromBody(c)
 
 	subDragonId := query | param | body
@@ -34,10 +34,10 @@ func getSubdragonIdFromBody(c *fiber.Ctx) (int, error) {
 		return 0, fmt.Errorf("Invalid request body")
 	}
 
-	// Check if the "userId" is provided in the request body
-	userIdFromBody, ok := requestBody["postId"].(int)
+	// Check if the "subDragonId" is provided in the request body
+	subDragonIdFromBody, ok := requestBody[constants.SUB_DRAGON_ID].(int)
 	if !ok {
-		userIdFromBody = 0 // If userId is not provided or not an integer, use a default value
+		subDragonIdFromBody = 0 // If subDragonId is not provided or not an integer, use a default value
 	}
-	return userIdFromBody, nil
+	return subDragonIdFromBody, nil
 }
