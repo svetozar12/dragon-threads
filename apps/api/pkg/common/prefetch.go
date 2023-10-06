@@ -20,6 +20,10 @@ var SUB_DRAGON_BY_ID = func(id int) string {
 	return fmt.Sprintf("SUB_DRAGON_BY_ID_%v", id)
 }
 
+var POST_BY_ID = func(id int) string {
+	return fmt.Sprintf("POST_BY_ID_%v", id)
+}
+
 var USER_BY_ID = func(id int) string {
 	return fmt.Sprintf("USER_BY_ID_%v", id)
 }
