@@ -10,10 +10,10 @@ import (
 func VotesRoute(app fiber.Router) {
 	votes := app.Group("/posts")
 	// Middlewares
-	votes.Use(middleware.OAuth2Middleware, fetch.FetchSubDragon)
+	votes.Use(middleware.OAuth2Middleware, fetch.FetchSubDragon, fetch.FetchPost, fetch.FetchUser)
 
 	// Routes
-	votes.Post("/:postId/upvote", fetch.FetchSubDragon, fetch.FetchUser, votePost)
-	votes.Post("/:postId/downvote", fetch.FetchSubDragon, fetch.FetchUser, votePost)
+	votes.Post("/:postId/upvote", upVotePost)
+	votes.Post("/:postId/downvote", downVotePost)
 
 }
