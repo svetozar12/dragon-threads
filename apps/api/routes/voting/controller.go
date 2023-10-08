@@ -9,7 +9,7 @@ import (
 )
 
 // Refactored godoc
-// @Summary      Vote on a Post
+// @Summary      UpVote a Post
 // @Tags         Post
 // @Accept       json
 // @Param request body votes.PostVoteSchema true "vote request"
@@ -40,7 +40,7 @@ func upVotePost(c *fiber.Ctx) error {
 }
 
 // Refactored godoc
-// @Summary      Vote on a Post
+// @Summary      DownVote a Post
 // @Tags         Post
 // @Accept       json
 // @Param request body votes.PostVoteSchema true "vote request"

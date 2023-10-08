@@ -4,6 +4,8 @@ import {
   PostApi,
   SubDragonApi,
   UserApi,
+  PostCommentApi,
+  SearchApi,
 } from './api/v1';
 
 const API_URL = `${process.env['NEXT_PUBLIC_SCHEMA'] || 'http'}://${
@@ -23,6 +25,8 @@ export const setToken = (token: string) => {
 export const sdk = {
   userInstance: () => new UserApi(config),
   postInstance: () => new PostApi(config),
+  postCommentInstance: () => new PostCommentApi(config),
+  searchInstance: () => new SearchApi(config),
   subDragonInstance: () => new SubDragonApi(config),
   authInstance: () => new AuthApi(config),
 };
