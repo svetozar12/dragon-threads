@@ -6,16 +6,11 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2020", "dom"],
     "module": "esnext",
     "moduleResolution": "node",
     "paths": {
-      "dragon-threads/shared/sdk": [
-        "libs/shared/sdk/src/index.ts"
-      ]
+      "@dragon-threads/shared/sdk": ["libs/shared/sdk/src/index.ts"]
     },
     "rootDir": ".",
     "skipDefaultLibCheck": true,
@@ -23,8 +18,5 @@
     "sourceMap": true,
     "target": "es2015"
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+  "exclude": ["node_modules", "tmp"]
 }

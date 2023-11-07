@@ -1,7 +1,7 @@
 {
   "name": "web",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/web",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "web",
   "projectType": "application",
   "targets": {
     "build": {
@@ -9,11 +9,11 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/web"
+        "outputPath": "dist/web"
       },
       "configurations": {
         "development": {
-          "outputPath": "apps/web"
+          "outputPath": "web"
         },
         "production": {}
       }
@@ -46,7 +46,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/web/jest.config.ts",
+        "jestConfig": "web/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
@@ -57,26 +57,10 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/web/**/*.{ts,tsx,js,jsx}"]
-      }
-    },
-    "docker-build": {
-      "dependsOn": ["build"],
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": ["docker build -f apps/web/Dockerfile . -t web/nextjs"],
-        "parallel": false
-      }
-    },
-    "docker-run": {
-      "dependsOn": ["docker-build"],
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": ["docker run -p 3000:3000 -d web/nextjs"],
-        "parallel": false
+        "lintFilePatterns": ["web/**/*.{ts,tsx,js,jsx}"]
       }
     }
   },
