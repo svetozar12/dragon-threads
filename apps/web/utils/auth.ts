@@ -3,7 +3,7 @@ import { getCookie } from 'cookies-next';
 
 export async function isAuth() {
   try {
-    const token = getCookie('token') || '';
+    const token = getCookie('accessToken') || '';
     setToken(token);
     const { status } = await sdk
       .authInstance()
