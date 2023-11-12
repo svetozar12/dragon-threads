@@ -3,11 +3,9 @@ import { isAuth } from './utils/auth';
 
 export async function middleware(req: NextRequest) {
   const userIsAuthenticated = await isAuth();
-  const {
-    nextUrl: { clone },
-  } = req;
+
   const { next, redirect } = NextResponse;
-  const url = clone();
+  const url = req.nextUrl.clone();
   if (!userIsAuthenticated) {
     // prevents infinite redirects
     if (url.pathname === '/login') return next();
@@ -17,3 +15,7 @@ export async function middleware(req: NextRequest) {
 
   return next();
 }
+
+export const config = {
+  matcher: ['/((?!_next|api/auth).*)(.+)'],
+};
