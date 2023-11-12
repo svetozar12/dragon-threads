@@ -4,6 +4,8 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 export const metadata = {
   title: 'Welcome to web',
@@ -16,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html>
       <body>{children}</body>
     </html>
   );

@@ -10,6 +10,7 @@
     "@remix-run/node": "^1.16.1",
     "@remix-run/react": "^1.16.1",
     "@remix-run/serve": "^1.16.1",
+    "cookies-next": "^4.0.0",
     "isbot": "^3.6.8",
     "next": "13.4.1",
     "react": "^18.2.0",

@@ -15,7 +15,7 @@ import (
 
 // @Summary Login with github
 // @Tags Auth
-// @Router /v1/auth/login [get]
+// @Router /v1/auth/github [get]
 func login(c *fiber.Ctx) error {
 	url := oauth.GithubOauthConfig.AuthCodeURL("state", oauth2.AccessTypeOnline)
 	return c.Redirect(url)
@@ -24,7 +24,7 @@ func login(c *fiber.Ctx) error {
 // @Summary Callback for corresponding login method
 // @Tags Auth
 // @Success 200 {object} auth.AuthSchema "Success"
-// @Router /v1/auth/callback [get]
+// @Router /v1/auth/github/callback [get]
 func githubCallback(c *fiber.Ctx) error {
 	code := c.Query("code")
 	token, err := oauth.GithubOauthConfig.Exchange(c.Context(), code)
@@ -65,4 +65,16 @@ func githubCallback(c *fiber.Ctx) error {
 
 	// Redirect the user to a URL
 	return c.Redirect(env.Envs.FRONTEND_URL)
+}
+
+// Example godoc
+// @Summary      Verify token
+// @Tags         Auth
+// @Accept       json
+// @Security 	 ApiKeyAuth
+// @Success      201  {object} nil
+// @Failure 	 400  {object} common.CommonErrorSchema
+// @Router       /v1/auth/verify [get]
+func verifyToken(c *fiber.Ctx) error {
+	return c.Status(fiber.StatusOK).JSON(nil)
 }
